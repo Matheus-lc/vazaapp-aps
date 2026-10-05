@@ -1,0 +1,23 @@
+%%{init: {"theme":"base","flowchart":{"curve":"linear","nodeSpacing":22,"rankSpacing":45},"themeVariables":{"fontFamily":"Arial","fontSize":"14px","primaryColor":"#eff6ff","primaryTextColor":"#172554","primaryBorderColor":"#2563eb","lineColor":"#64748b","clusterBkg":"#f8fafc","clusterBorder":"#94a3b8"}}}%%
+flowchart LR
+    %% Associações sólidas sem seta representam participação; não representam sequência.
+    A["«ator»<br/>Administrador"]
+    subgraph SYS["VazaApp — Administração do catálogo"]
+        subgraph catalogo["Administração do catálogo"]
+            direction TB
+            UC027(["UC-027<br/>Cadastrar categoria"])
+            UC028(["UC-028<br/>Consultar categorias"])
+            UC029(["UC-029<br/>Atualizar categoria"])
+            UC030(["UC-030<br/>Desativar categoria"])
+            UC031(["UC-031<br/>Cadastrar modelo de desculpa"])
+            UC032(["UC-032<br/>Consultar modelos de desculpa"])
+            UC033(["UC-033<br/>Atualizar modelo de desculpa"])
+            UC034(["UC-034<br/>Desativar modelo de desculpa"])
+            UC035(["UC-035<br/>Consultar avaliações recebidas"])
+        end
+    end
+    A --- UC027 & UC028 & UC029 & UC030 & UC031 & UC032 & UC033 & UC034 & UC035
+    classDef actor fill:#e2e8f0,stroke:#475569,color:#0f172a,stroke-width:2px;
+    classDef management fill:#ecfdf5,stroke:#059669,color:#064e3b;
+    class A actor;
+    class UC027,UC028,UC029,UC030,UC031,UC032,UC033,UC034,UC035 management;

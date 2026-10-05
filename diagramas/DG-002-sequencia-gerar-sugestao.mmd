@@ -1,0 +1,83 @@
+sequenceDiagram
+    autonumber
+    actor U as Usuário
+    participant T as TelaSugestao<br/>Interface
+    participant C as GeracaoController<br/>Aplicação
+    participant S as GeracaoService<br/>Coordenação
+    participant P as PoliticaGeracao<br/>Domínio
+    participant K as CatalogoRepository<br/>Catálogo
+    participant R as PedidoRepository<br/>Persistência
+
+    Note over U,R: DG-002 — UC-017 Gerar sugestão personalizada<br/>Fluxo principal, A1/A2 e E1/E2/E3, reutilização por UC-018
+    Note over T,S: O caso acionado define modo inicial ou alternativa (UC-018).
+    U->>T: Solicitar geração para o pedido (P1)
+    T->>C: gerarSugestao(pedidoId, chaveOperacao, modo)
+    C->>C: autenticarSessao() (P2)
+    alt Sessão inválida
+        C-->>T: acessoNegado (E2)
+        T-->>U: Solicitar autenticação, geração não realizada
+    else Sessão ativa
+        C->>S: gerarSugestao(usuarioId, pedidoId, chaveOperacao, modo)
+        S->>R: buscarFotografiaPropriaEOperacao(usuarioId, pedidoId, chaveOperacao) (P2/P3)
+        R-->>S: acesso, fotografia, estado da operação e modelos anteriores
+        alt Pedido inexistente ou sem permissão
+            S-->>C: acessoNegado (E2)
+            C-->>T: acessoNegado
+            T-->>U: Informar impossibilidade de acesso, geração não realizada
+        else Pedido próprio autorizado
+            Note over S,R: A fotografia já contém destinatário e contexto copiados.<br/>Não consultar o perfil ou destinatário atuais para substituir esses dados.
+            alt Mesma operação já confirmada
+                Note over S,R: A2 detectada em P3: saltar P4–P7.<br/>P8 recupera o resultado confirmado, mesmo se o catálogo mudou.
+                S->>R: recuperarSugestaoConfirmada(usuarioId, pedidoId, chaveOperacao) (P8/A2)
+                R-->>S: sugestaoExistente
+                S-->>C: sugestaoConfirmadaExistente
+                C-->>T: sugestaoConfirmadaExistente (P9)
+                T-->>U: Apresentar a mesma sugestão, sem novo histórico
+            else Operação ainda não confirmada
+                S->>K: consultarEstadoCategoria(fotografia.categoriaId) (P4)
+                K-->>S: categoriaAtiva
+                S->>P: validarMinimos(fotografia, categoriaAtiva, modo) (P4)
+                P-->>S: validade e pendências
+                alt Dados incompletos, categoria inativa ou estado incompatível
+                    S-->>C: pendenciasDeGeracao (E1)
+                    C-->>T: pendenciasDeGeracao
+                    T-->>U: Informar pendências, nenhuma sugestão registrada
+                else Pedido apto a gerar
+                    S->>K: buscarModelosAtivosCompativeis(categoriaId, tipo, proximidade) (P5)
+                    K-->>S: modelosCandidatos
+                    Note over S,P: UC-017 usa exclusões vazias, UC-018 usa os modelos anteriores.<br/>Esses dados são recuperados somente após autorização.
+                    S->>P: selecionarModelo(modelosCandidatos, fotografia, modelosExcluidos) (P6)
+                    loop Para cada modelo candidato
+                        P->>P: avaliarExclusaoEAfinidadeComContexto(modelo)
+                    end
+                    P->>P: ordenarPorTagsPresentesEIdESelecionar()
+                    P-->>S: modeloSelecionado ou nenhum
+                    alt Nenhum modelo compatível disponível
+                        S-->>C: semAlternativaDisponivel (A1)
+                        C-->>T: semAlternativaDisponivel
+                        T-->>U: Informar indisponibilidade, manter registros existentes
+                    else Modelo selecionado
+                        S->>P: personalizar(modeloSelecionado, fotografia) (P7)
+                        P-->>S: texto com dados fornecidos, sem fatos inventados
+                        S->>R: registrarSugestaoAtomica(usuarioId, pedidoId, chaveOperacao, modeloId, texto) (P8)
+                        Note over R: Unidade de trabalho: sugestão + vínculo + histórico + estado.<br/>Conferir chave, estado do pedido, modelo já usado e elegibilidade na transação.<br/>Confirmar tudo ou desfazer tudo (RN-012/RN-024).
+                        R-->>S: resultado da transação
+                        alt Nova sugestão confirmada
+                            S-->>C: sugestaoConfirmada, pedido com_sugestao
+                            C-->>T: sugestaoConfirmada (P9)
+                            T-->>U: Apresentar sugestão registrada e confirmação
+                        else Mesma chave confirmada por execução concorrente
+                            S-->>C: sugestaoConfirmadaExistente (A2)
+                            C-->>T: sugestaoConfirmadaExistente (P9)
+                            T-->>U: Apresentar a mesma sugestão, sem duplicar histórico
+                        else Falha de persistência ou conflito não resolvido
+                            Note over R: Rollback, nenhum novo registro parcial.<br/>Conflito de modelo usado não confirma uma duplicação.
+                            S-->>C: geracaoNaoConcluida (E3)
+                            C-->>T: geracaoNaoConcluida
+                            T-->>U: Informar falha, permitir nova tentativa com a mesma chave
+                        end
+                    end
+                end
+            end
+        end
+    end

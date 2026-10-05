@@ -1,0 +1,17 @@
+%%{init: {"theme":"base","flowchart":{"curve":"linear","nodeSpacing":22,"rankSpacing":45},"themeVariables":{"fontFamily":"Arial","fontSize":"14px","primaryColor":"#eff6ff","primaryTextColor":"#172554","primaryBorderColor":"#2563eb","lineColor":"#64748b","clusterBkg":"#f8fafc","clusterBorder":"#94a3b8"}}}%%
+flowchart LR
+    %% Associações sólidas sem seta representam participação; não representam sequência.
+    U["«ator»<br/>Usuário"]
+    subgraph SYS["VazaApp — Pedidos"]
+        subgraph pedidos["Pedidos"]
+            direction TB
+            UC013(["UC-013<br/>Criar pedido de desculpa"])
+            UC014(["UC-014<br/>Consultar pedidos"])
+            UC015(["UC-015<br/>Atualizar pedido em rascunho"])
+            UC016(["UC-016<br/>Excluir pedido"])
+        end
+    end
+    U --- UC013 & UC014 & UC015 & UC016
+    classDef actor fill:#e2e8f0,stroke:#475569,color:#0f172a,stroke-width:2px;
+    classDef management fill:#ecfdf5,stroke:#059669,color:#064e3b;
+    class U actor;

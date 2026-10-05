@@ -1,0 +1,25 @@
+%%{init: {"theme":"base","flowchart":{"curve":"linear","nodeSpacing":22,"rankSpacing":45},"themeVariables":{"fontFamily":"Arial","fontSize":"14px","primaryColor":"#eff6ff","primaryTextColor":"#172554","primaryBorderColor":"#2563eb","lineColor":"#64748b","clusterBkg":"#f8fafc","clusterBorder":"#94a3b8"}}}%%
+flowchart LR
+    %% Associações sólidas sem seta representam participação; não representam sequência.
+    V["«ator»<br/>Visitante"]
+    U["«ator»<br/>Usuário"]
+    A["«ator»<br/>Administrador"]
+    E["«sistema externo»<br/>Serviço de e-mail"]
+    subgraph SYS["VazaApp — Conta e acesso"]
+        subgraph conta["Conta e acesso"]
+            direction TB
+            UC001(["UC-001<br/>Cadastrar conta"])
+            UC002(["UC-002<br/>Autenticar usuário"])
+            UC003(["UC-003<br/>Encerrar sessão"])
+            UC004(["UC-004<br/>Recuperar acesso"])
+            UC005(["UC-005<br/>Alterar dados da conta"])
+            UC006(["UC-006<br/>Excluir conta"])
+        end
+    end
+    V --- UC001 & UC002 & UC004
+    U --- UC003 & UC005 & UC006
+    A --- UC003
+    UC004 --- E
+    classDef actor fill:#e2e8f0,stroke:#475569,color:#0f172a,stroke-width:2px;
+    classDef management fill:#ecfdf5,stroke:#059669,color:#064e3b;
+    class V,U,A,E actor;

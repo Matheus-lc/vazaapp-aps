@@ -1,0 +1,71 @@
+%%{init: {"theme":"base","flowchart":{"curve":"linear","nodeSpacing":22,"rankSpacing":45},"themeVariables":{"fontFamily":"Arial","fontSize":"14px","primaryColor":"#eff6ff","primaryTextColor":"#172554","primaryBorderColor":"#2563eb","lineColor":"#64748b","clusterBkg":"#f8fafc","clusterBorder":"#94a3b8"}}}%%
+flowchart LR
+    %% Associações sólidas sem seta representam participação; não representam sequência.
+    V["«ator»<br/>Visitante"]
+    U["«ator»<br/>Usuário"]
+    A["«ator»<br/>Administrador"]
+    E["«sistema externo»<br/>Serviço de e-mail"]
+    subgraph SYS["VazaApp — 35 casos de uso"]
+        subgraph conta["Conta e acesso"]
+            direction TB
+            UC001(["UC-001<br/>Cadastrar conta"])
+            UC002(["UC-002<br/>Autenticar usuário"])
+            UC003(["UC-003<br/>Encerrar sessão"])
+            UC004(["UC-004<br/>Recuperar acesso"])
+            UC005(["UC-005<br/>Alterar dados da conta"])
+            UC006(["UC-006<br/>Excluir conta"])
+        end
+        subgraph contexto["Contexto e destinatários"]
+            direction TB
+            UC007(["UC-007<br/>Consultar perfil de contexto"])
+            UC008(["UC-008<br/>Atualizar perfil de contexto"])
+            UC009(["UC-009<br/>Cadastrar destinatário"])
+            UC010(["UC-010<br/>Consultar destinatários"])
+            UC011(["UC-011<br/>Atualizar destinatário"])
+            UC012(["UC-012<br/>Excluir destinatário"])
+        end
+        subgraph pedidos["Pedidos"]
+            direction TB
+            UC013(["UC-013<br/>Criar pedido de desculpa"])
+            UC014(["UC-014<br/>Consultar pedidos"])
+            UC015(["UC-015<br/>Atualizar pedido em rascunho"])
+            UC016(["UC-016<br/>Excluir pedido"])
+        end
+        subgraph sugestoes["Sugestões e favoritos"]
+            direction TB
+            UC017(["UC-017<br/>Gerar sugestão personalizada"])
+            UC018(["UC-018<br/>Solicitar nova sugestão"])
+            UC019(["UC-019<br/>Consultar histórico de sugestões"])
+            UC020(["UC-020<br/>Copiar sugestão"])
+            UC021(["UC-021<br/>Favoritar sugestão"])
+            UC022(["UC-022<br/>Consultar favoritos"])
+            UC023(["UC-023<br/>Remover sugestão dos favoritos"])
+        end
+        subgraph avaliacoes["Avaliações"]
+            direction TB
+            UC024(["UC-024<br/>Avaliar sugestão"])
+            UC025(["UC-025<br/>Atualizar avaliação"])
+            UC026(["UC-026<br/>Excluir avaliação"])
+        end
+        subgraph catalogo["Administração do catálogo"]
+            direction TB
+            UC027(["UC-027<br/>Cadastrar categoria"])
+            UC028(["UC-028<br/>Consultar categorias"])
+            UC029(["UC-029<br/>Atualizar categoria"])
+            UC030(["UC-030<br/>Desativar categoria"])
+            UC031(["UC-031<br/>Cadastrar modelo de desculpa"])
+            UC032(["UC-032<br/>Consultar modelos de desculpa"])
+            UC033(["UC-033<br/>Atualizar modelo de desculpa"])
+            UC034(["UC-034<br/>Desativar modelo de desculpa"])
+            UC035(["UC-035<br/>Consultar avaliações recebidas"])
+        end
+    end
+    V --- UC001 & UC002 & UC004
+    U --- UC003 & UC005 & UC006 & UC007 & UC008 & UC009 & UC010 & UC011 & UC012 & UC013 & UC014 & UC015 & UC016 & UC017 & UC018 & UC019 & UC020 & UC021 & UC022 & UC023 & UC024 & UC025 & UC026
+    A --- UC003 & UC027 & UC028 & UC029 & UC030 & UC031 & UC032 & UC033 & UC034 & UC035
+    UC004 --- E
+    UC018 -. "«include»" .-> UC017
+    classDef actor fill:#e2e8f0,stroke:#475569,color:#0f172a,stroke-width:2px;
+    classDef management fill:#ecfdf5,stroke:#059669,color:#064e3b;
+    class V,U,A,E actor;
+    class UC027,UC028,UC029,UC030,UC031,UC032,UC033,UC034,UC035 management;
