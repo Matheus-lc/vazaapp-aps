@@ -16,6 +16,25 @@ O VazaApp oferece sugestões de desculpas personalizadas a partir da situação,
 **Professor:** Prof. Dr. João Choma.  
 **Disciplina:** Análise e Projeto de Software.
 
+## Entrega do primeiro bimestre
+
+| Artefato | Arquivo para consulta |
+|---|---|
+| Regras de negócio — 24 RN | [Documento em PDF](documentos/01-regras-de-negocio.pdf) |
+| Requisitos — 35 RF e 8 RNF | [Documento em PDF](documentos/02-requisitos.pdf) |
+| Casos de uso — 35 UC e checklist preenchido | [Documento em PDF](documentos/03-casos-de-uso.pdf) |
+| Diagrama de casos de uso | [Imagem SVG](casos-de-uso.svg) |
+| Diagramas de sequência — um por caso | [Índice com as 35 imagens e edição Mermaid](#diagramas) |
+| Participantes | [Nomes e RAs da equipe](#equipe-e-disciplina) |
+
+O grupo **não utilizou o Jira** neste projeto; evidências de tarefas, histórias ou sprints dessa ferramenta não se aplicam.
+
+### Origem e situação da análise
+
+O contexto inicial foi indicado pelo grupo no repositório `isabvenancio/atividade_aps_3`. A fonte detalhada desta entrega é a especificação consolidada abaixo, com vínculos entre RN, RF, RNF, UC, critérios CA e testes CT. Limites, metas e decisões adicionais são **propostas de análise da equipe**, sem atribuição a entrevistas ou aprovação formal de usuários. Os documentos registram origem, condições, interessados, prioridade e forma de verificação.
+
+Foi realizada revisão documental segundo as aulas disponíveis das semanas 01, 02, 03, 04, 05 e 08 e as atividades do primeiro bimestre no [repositório do professor](https://github.com/JoaoChoma/analise_projeto_esoft_2026). O checklist preenchido está no apêndice do PDF de casos de uso. Os 103 critérios de aceite e 103 cenários CT são propostos: **não representam testes executados contra uma implementação**. Ensaios de segurança, carga, compatibilidade e demais qualidades ainda dependem da implementação e do ambiente.
+
 ## Navegação
 
 - [Diagramas](#diagramas)
@@ -139,7 +158,7 @@ Conta, perfil, banco de dados, categorias e modelos são elementos internos. Os 
 | <a id="rn-001"></a>RN-001 | Cada conta possui nome, e-mail único e senha; telefone e foto são opcionais. E-mail é normalizado antes da comparação. |
 | <a id="rn-002"></a>RN-002 | Somente contas ativas com credenciais válidas iniciam sessão. Encerrar sessão invalida a sessão corrente. Operações administrativas exigem o papel Administrador. |
 | <a id="rn-003"></a>RN-003 | Dados de conta, perfil, destinatários, pedidos, sugestões, favoritos e avaliações pertencem ao usuário; nenhum usuário pode consultar ou alterar os dados de outro. |
-| <a id="rn-004"></a>RN-004 | Recuperação de acesso usa token de uso único com validade de 15 minutos enviado ao e-mail cadastrado; a resposta pública não revela se uma conta existe. A redefinição por token não exige senha anterior e invalida todas as sessões da conta. |
+| <a id="rn-004"></a>RN-004 | A recuperação de acesso somente pode ser concluída mediante autorização encaminhada ao e-mail cadastrado, válida por 15 minutos e para uma única redefinição. A resposta pública não pode revelar se a conta existe. A recuperação autorizada dispensa a senha anterior e encerra todas as sessões da conta. |
 | <a id="rn-005"></a>RN-005 | Excluir conta exige confirmação e senha atual; elimina os dados pessoais e seus registros dependentes e invalida suas sessões, sem excluir categorias ou modelos compartilhados. |
 | <a id="rn-006"></a>RN-006 | O perfil de contexto é opcional e pode conter profissão, trabalho, moradia e contexto social/acadêmico; apenas informações fornecidas são usadas na personalização. |
 | <a id="rn-007"></a>RN-007 | Destinatário exige nome, tipo (familiar, amigo, colega, superior ou outro) e proximidade (baixa, média ou alta). |
@@ -147,10 +166,10 @@ Conta, perfil, banco de dados, categorias e modelos são elementos internos. Os 
 | <a id="rn-009"></a>RN-009 | Somente pedidos em rascunho podem ser editados. Pedido com sugestão preserva seus dados como fotografia do contexto. Excluir qualquer pedido exige confirmação e remove suas sugestões, favoritos e avaliações dependentes. |
 | <a id="rn-010"></a>RN-010 | Geração utiliza somente modelos ativos de categoria ativa, compatíveis com o tipo de destinatário e a proximidade do pedido. Candidatos com mais tags presentes no contexto informado têm prioridade; comparação sem distinção entre maiúsculas/minúsculas e desempate por identificador crescente. Sem contexto ou tags compatíveis, usa o desempate estável. |
 | <a id="rn-011"></a>RN-011 | Personalização substitui apenas parâmetros permitidos (nome_destinatario, situacao, contexto, nome_usuario) com dados fornecidos; contexto ausente é omitido sem inventar fatos. |
-| <a id="rn-012"></a>RN-012 | Sugestão, vínculo ao pedido e histórico são persistidos em uma única transação. Só após confirmação da transação a sugestão é apresentada como concluída e o pedido passa a com_sugestao. |
+| <a id="rn-012"></a>RN-012 | Uma geração somente está concluída quando a sugestão, seu vínculo ao pedido, o histórico e o estado com_sugestao representam o mesmo resultado confirmado. Não se admite uma geração parcialmente registrada ou anunciada como concluída. |
 | <a id="rn-013"></a>RN-013 | Nova sugestão reutiliza a fotografia do pedido e exclui modelos já utilizados nesse pedido. Se não há alternativa, informa indisponibilidade e mantém as sugestões existentes. |
 | <a id="rn-014"></a>RN-014 | Um usuário pode favoritar uma sugestão própria uma única vez. Remover dos favoritos não exclui a sugestão nem o histórico. |
-| <a id="rn-015"></a>RN-015 | Copiar transfere o texto da sugestão própria para a área de transferência mediante ação do usuário; não envia mensagens ao destinatário. |
+| <a id="rn-015"></a>RN-015 | A utilização do texto de uma sugestão própria em outro aplicativo depende de iniciativa do usuário. O VazaApp não realiza o envio ao destinatário, e a disponibilização do texto não altera o pedido, a sugestão ou o histórico. |
 | <a id="rn-016"></a>RN-016 | Cada sugestão admite uma avaliação do proprietário, com nota inteira de 1 a 5 e comentário opcional de até 500 caracteres. Avaliar é opcional; atualização substitui a avaliação existente. |
 | <a id="rn-017"></a>RN-017 | Categoria possui nome único e descrição. Desativar categoria impede novas gerações e cadastro/ativação de modelos nela, preservando pedidos e sugestões históricos. |
 | <a id="rn-018"></a>RN-018 | Modelo exige texto, categoria ativa e pelo menos um tipo de destinatário e uma proximidade permitidos. Tags de contexto são opcionais, mantidas como termos não vazios e sem duplicatas após normalização. Parâmetros fora da lista permitida são rejeitados. |
@@ -158,8 +177,8 @@ Conta, perfil, banco de dados, categorias e modelos são elementos internos. Os 
 | <a id="rn-020"></a>RN-020 | Consulta administrativa de avaliações apresenta categoria, modelo, nota, comentário e data, sem campos estruturados de nome, e-mail, destinatário ou contexto pessoal; não concede acesso aos pedidos dos usuários. Comentário livre pode conter informações fornecidas pelo autor, portanto a interface não promete anonimização integral. |
 | <a id="rn-021"></a>RN-021 | Na alteração autenticada dos dados da conta (UC-005), alterar e-mail ou senha exige senha atual. O novo e-mail deve permanecer único. Alterar senha nesse caso invalida as demais sessões da conta; recuperação por token segue RN-004. |
 | <a id="rn-022"></a>RN-022 | Excluir destinatário exige confirmação e preserva a fotografia do destinatário nos pedidos já criados; esses pedidos continuam consultáveis e aptos a gerar com os dados preservados. |
-| <a id="rn-023"></a>RN-023 | Consultas sem registros ou sem correspondência ao filtro retornam uma lista vazia com orientação; ausência de resultado não é falha de persistência. |
-| <a id="rn-024"></a>RN-024 | Geração usa uma chave de operação: repetir a mesma solicitação já confirmada devolve a mesma sugestão antes de revalidar o catálogo. A exclusão de modelos anteriores e o estado apropriado do pedido são conferidos no registro para impedir duplicação concorrente no mesmo pedido. |
+| <a id="rn-023"></a>RN-023 | A ausência de registros ou de correspondências aos filtros é um resultado válido da consulta, distinto da indisponibilidade dos dados. Essa ausência deve ser informada ao usuário com orientação para rever filtros ou cadastrar dados, quando aplicável. |
+| <a id="rn-024"></a>RN-024 | A repetição de uma solicitação de geração já concluída deve devolver seu resultado original, inclusive após mudanças no catálogo. Para o mesmo pedido, tentativas simultâneas não podem confirmar gerações duplicadas nem reutilizar, como alternativa, um modelo já empregado; o estado do pedido deve permitir a geração solicitada. |
 
 ### Requisitos funcionais
 
@@ -216,7 +235,22 @@ As metas de desempenho são propostas para a implementação e deverão ser medi
 | <a id="rnf-005"></a>RNF-005 | Compatibilidade | A interface web deve funcionar em navegadores modernos de desktop e dispositivos móveis, sem plugin. Se a API de área de transferência estiver indisponível, oferecer cópia manual. | Todos os UCs; alternativa específica em UC-020 |
 | <a id="rnf-006"></a>RNF-006 | Integridade | Persistência deve respeitar transações, integridade referencial e recuperação após falhas. Geração confirma sugestão, vínculo, histórico e estado juntos; exclusões eliminam dependências atomicamente; repetição da mesma chave não duplica uma geração. | UCs de escrita, especialmente UC-006, UC-016, UC-017, UC-018 |
 | <a id="rnf-007"></a>RNF-007 | Observabilidade | Falhas e gerações devem ter identificador de correlação, instante e resultado técnico, sem registrar senhas, tokens, texto pessoal do pedido ou conteúdo do contexto. Logs não substituem o histórico consultável. | UC-004, UC-017, UC-018 e exceções técnicas de persistência |
-| <a id="rnf-008"></a>RNF-008 | Manutenibilidade | Separar interface, coordenação da aplicação, regras do domínio e persistência. Categorias e modelos são mantidos pelo administrador sem alteração de código, respeitando a validação dos parâmetros. | UC-017, UC-018, UC-027 a UC-034; DG-002 |
+| <a id="rnf-008"></a>RNF-008 | Manutenibilidade | Separar interface, coordenação da aplicação, regras do domínio e persistência. Categorias e modelos são mantidos pelo administrador sem alteração de código, respeitando a validação dos parâmetros. | UC-017, UC-018, UC-027 a UC-034; sequências dos casos correspondentes |
+
+### Plano de verificação dos requisitos não funcionais
+
+Os procedimentos VN-RNF-001 a VN-RNF-008 estão detalhados no [PDF de requisitos](documentos/02-requisitos.pdf), com escopo, prioridade proposta, critérios e evidências a coletar. Todos estão **não executados**.
+
+| Requisito | Critério e método propostos |
+|---|---|
+| RNF-001 — Segurança | Testar sessão, papel e propriedade; zero acesso indevido no conjunto exercitado; token de recuperação de 15 minutos e uso único; inspecionar hash, TLS e ausência de segredos nos logs. |
+| RNF-002 — Privacidade | Testar isolamento entre contas e projeção administrativa limitada a categoria, modelo, nota, comentário e data; conferir aviso sobre texto livre. |
+| RNF-003 — Usabilidade | Conferir português, rótulos, foco e conclusão dos fluxos por teclado, inclusive confirmação; distinguir sucesso, pendência, vazio e falha. |
+| RNF-004 — Desempenho | Medir p95 de geração ≤ 5 s e consultas ≤ 2 s, com 20 usuários e 1.000 modelos. Meta preliminar: registrar hardware, software, rede, base, carga e protocolo antes do ensaio; ambiente e medições pendentes. |
+| RNF-005 — Compatibilidade | Matriz alvo proposta: Chrome, Firefox e Edge em desktop; Chrome em Android e Safari em iOS. Registrar versões estáveis e dispositivos usados na execução; conferir fluxos e cópia manual sem plugin. |
+| RNF-006 — Integridade | Injetar falhas e concorrência; zero resultado parcial, dependência órfã ou duplicação da mesma chave; conferir exclusões e preservação do histórico. |
+| RNF-007 — Observabilidade | Inspecionar correlação, instante e resultado técnico; zero senha, token, texto pessoal ou contexto em amostras de logs dos cenários exercitados. |
+| RNF-008 — Manutenibilidade | Revisar responsabilidades de interface, aplicação, domínio e persistência; manter categorias/modelos por UC-027 a UC-034 sem alterar código. |
 
 ### Dados e decisões do domínio
 
@@ -232,6 +266,22 @@ As metas de desempenho são propostas para a implementação e deverão ser medi
 | OperaçãoGeracao | Chave de operação, pedido, proprietário e resultado confirmado. Reexecutar a mesma chave consulta o resultado antes de revalidar a elegibilidade atual do catálogo. |
 | Histórico | Visão das sugestões confirmadas; não exige uma segunda cópia do texto. A escrita é atômica com a sugestão. |
 | Avaliação | Nota de 1 a 5 e comentário opcional até 500 caracteres; uma por sugestão. O comentário pode conter dados inseridos pelo autor, portanto a interface orienta não compartilhar dados pessoais. A administração recebe campos estruturados minimizados; isso não é uma garantia de anonimização do texto livre. |
+
+### Relações e cardinalidades propostas
+
+| Relação | Cardinalidade e preservação |
+|---|---|
+| Conta / PerfilContexto | Uma conta possui zero ou um perfil opcional. |
+| Conta / registros pessoais | Uma conta possui zero ou muitos destinatários e pedidos; cada registro possui um proprietário. |
+| Pedido / Sugestão | Um pedido possui zero ou muitas sugestões; cada sugestão pertence a um pedido. |
+| Pedido / destinatário | O vínculo a um destinatário cadastrado é opcional; a fotografia dos dados é preservada após excluir o cadastro. |
+| Categoria / Modelo | Uma categoria classifica zero ou muitos modelos; cada modelo pertence a uma categoria. Desativar preserva o histórico. |
+| Sugestão / Avaliação | Uma sugestão possui zero ou uma avaliação de seu proprietário. |
+| Conta / favorito / Sugestão | Zero ou muitos favoritos de sugestões próprias; o par conta/sugestão é único. |
+| Sugestão / Modelo | Cada sugestão identifica modelo/versão e preserva o texto gerado após a manutenção do catálogo. |
+| Operação de geração | Uma chave vinculada a proprietário e pedido confirma no máximo um resultado; histórico é uma visão dos resultados confirmados. |
+
+Essas relações derivam das regras e fluxos de análise e não prescrevem tabelas ou tecnologia de persistência.
 
 ### Limites do escopo
 
