@@ -37,7 +37,6 @@ Foi realizada revisão documental segundo as aulas disponíveis das semanas 01, 
 
 ## Navegação
 
-- [Atividade 4: respostas e diagramas](Atividade%204/ATIVIDADE04_DIAGRAMA_SEQUENCIA_respostas.MD)
 - [Diagramas](#diagramas)
 - [Atores e catálogo dos 35 casos](#atores-e-catálogo)
 - [Regras e requisitos](#regras-e-requisitos)
